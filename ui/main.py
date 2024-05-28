@@ -1,7 +1,7 @@
-# app/main.py
+# ui/main.py
 
 import streamlit as st
-from app.ui import (
+from .ui import (
     show_title,
     show_description,
     show_voice_file_uploader,
@@ -12,7 +12,7 @@ from app.ui import (
     show_debug_area,
     display_synthesis_result
 )
-from app.api import get_voice_files, synthesize_speech
+from .api import get_voice_files, synthesize_speech
 
 def main():
     show_title()

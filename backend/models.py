@@ -1,4 +1,4 @@
-# app/models.py
+# backend/models.py
 
 from pydantic import BaseModel
 

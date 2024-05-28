@@ -1,4 +1,4 @@
-# app/ui.py
+# ui/ui.py
 
 import streamlit as st
 from io import BytesIO

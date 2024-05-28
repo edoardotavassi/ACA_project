@@ -1,4 +1,4 @@
-# app/api.py
+# ui/api.py
 
 import requests
 

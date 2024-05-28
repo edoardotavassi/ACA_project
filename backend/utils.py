@@ -1,4 +1,4 @@
-# app/utils.py
+# backend/utils.py
 
 import numpy as np
 import lameenc
