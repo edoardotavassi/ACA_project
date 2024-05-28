@@ -33,12 +33,34 @@ class SyntetizeRequest(BaseModel):
     text: str
     language: str
 
-@app.post("/synthetize")
-async def synthetize(request: SyntetizeRequest):
-    return{
-        "text": request.text,
+def split_text(text, max_length=200):
+    words = text.split()
+    current_chunk = []
+    chunks = []
+    current_length = 0
+    
+    for word in words:
+        if current_length + len(word) + len(current_chunk) > max_length:
+            chunks.append(' '.join(current_chunk))
+            current_chunk = [word]
+            current_length = len(word)
+        else:
+            current_chunk.append(word)
+            current_length += len(word)
+    
+    # Add the last chunk
+    if current_chunk:
+        chunks.append(' '.join(current_chunk))
+    
+    return chunks
+
+@app.post("/synthesize")
+async def synthesize(request: SynthesizeRequest):
+    text_chunks = split_text(request.text)
+    return {
+        "text_chunks": text_chunks,
         "language": request.language,
-        "message": "Data received succesfully"
+        "message": "Data received and processed successfully"
     }
 
 
