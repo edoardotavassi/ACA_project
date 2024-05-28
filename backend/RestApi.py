@@ -108,6 +108,6 @@ async def synthesize(request: SynthesizeRequest):
 
     return StreamingResponse(mp3_buffer, media_type="audio/mpeg", headers={"Content-Disposition": "attachment; filename=output.mp3"})
 
-# classic main method
+
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)
