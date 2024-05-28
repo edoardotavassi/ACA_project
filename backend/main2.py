@@ -8,7 +8,7 @@ tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
 
 sentence="È passato un anno da quando Batman ha fatto la sua comparsa e Gotham City è diventata un posto migliore, con la malavita terrorizzata, ma anche con alcuni vigilanti improvvisati che cercano in tutti i modi di imitare l'Uomo Pipistrello, il quale disapprova un simile operato e fa capire di non poter condividere la sua missione con "
 voice_to_clone="input/it.wav"
-output_name="output.wav"
+output_name="output.mp3"
 
 # generate speech by cloning a voice using default settings
 wav=tts.tts(text=sentence,
@@ -16,8 +16,13 @@ wav=tts.tts(text=sentence,
                 language="it")
 
 
-print(isinstance(wav, np.ndarray))
+wav = np.array(wav)
 
+import numpy as np
+import io
+import lameenc
+from pydub import AudioSegment
+from IPython.display import Audio
 
 
 def encode_wav_to_mp3(wav_data_array, sample_rate=22100):
@@ -51,8 +56,10 @@ def encode_wav_to_mp3(wav_data_array, sample_rate=22100):
 
     return mp3_data
 
-mp3=encode_wav_to_mp3(wav)
 
+# Encode the WAV data to MP3
+mp3_data = encode_wav_to_mp3(wav)
 
-with open("output.mp3", "wb") as f:
-    f.write(mp3)
+# Save the MP3 data to a file
+with open(output_name, 'wb') as f:
+    f.write(mp3_data)
