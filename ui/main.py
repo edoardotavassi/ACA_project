@@ -17,6 +17,17 @@ else:
     st.error("Failed to fetch the list of voice files.")
     voice_files = []
 
+# File upload
+uploaded_file = st.file_uploader("Choose a WAV file", type="wav")
+if uploaded_file is not None:
+    files = {'file': uploaded_file.getvalue()}
+    response = requests.post("http://127.0.0.1:8000/upload", files=files)
+    if response.status_code == 200:
+        st.success(f"File '{uploaded_file.name}' uploaded successfully.")
+        voice_files.append(uploaded_file.name)
+    else:
+        st.error("Failed to upload the file.")
+
 # Text input area
 text = st.text_area('Text to synthesize', 'Antonio Conte è pronto a tornare in Italia. Tre anni dopo il suo addio all’Inter, il tecnico leccese secondo le indiscrezioni è infatti pronto a firmare un nuovo accordo con il Napoli, che dopo una stagione burrascosa chiusa con il decimo posto in classifica vuole subito rialzarsi e tornare a lottare per le posizioni di vertice.')
 

@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -81,6 +81,13 @@ def encode_wav_to_mp3(wav_data_array, sample_rate=24000):
 async def list_voices():
     voice_files = [f for f in os.listdir("input") if f.endswith(".wav")]
     return {"voices": voice_files}
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    file_location = f"input/{file.filename}"
+    with open(file_location, "wb") as f:
+        f.write(await file.read())
+    return {"info": f"file '{file.filename}' saved at '{file_location}'"}
 
 @app.post("/synthesize")
 async def synthesize(request: SynthesizeRequest):
