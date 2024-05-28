@@ -2,23 +2,17 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from typing import List
-from fastapi.responses import StreamingResponse
-
 from pydub import AudioSegment
 import numpy as np
 import lameenc
-from IPython.display import Audio
 import io
-import lameenc
-
-
+import os
 from TTS.api import TTS
 
 app = FastAPI()  # definition of framework
-
 
 # name of the app framework
 @app.get("/", status_code=200)
@@ -30,7 +24,6 @@ def root():
 def health_check():
     return {"Status": "OK"}
 
-
 # if the user insert an empty string we handle this situation as an exception
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -39,11 +32,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=jsonable_encoder({"status": "Error"}),
     )
 
-
-
 class SynthesizeRequest(BaseModel):
     text: str
     language: str
+    voice_file: str
 
 def split_text(text, max_length=200):
     words = text.split()
@@ -85,10 +77,15 @@ def encode_wav_to_mp3(wav_data_array, sample_rate=24000):
 
     return mp3_data
 
+@app.get("/voices")
+async def list_voices():
+    voice_files = [f for f in os.listdir("input") if f.endswith(".wav")]
+    return {"voices": voice_files}
+
 @app.post("/synthesize")
 async def synthesize(request: SynthesizeRequest):
     tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
-    voice_to_clone = "input/it.wav"
+    voice_to_clone = f"input/{request.voice_file}"
     text_chunks = split_text(request.text)
     synthesized_audio = []
 
