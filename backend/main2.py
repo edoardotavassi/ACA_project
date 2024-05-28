@@ -2,6 +2,9 @@ from pydub import AudioSegment
 import numpy as np
 import lameenc
 from IPython.display import Audio
+import io
+import lameenc
+
 
 from TTS.api import TTS
 tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
@@ -18,14 +21,10 @@ wav=tts.tts(text=sentence,
 
 wav = np.array(wav)
 
-import numpy as np
-import io
-import lameenc
-from pydub import AudioSegment
-from IPython.display import Audio
 
 
-def encode_wav_to_mp3(wav_data_array, sample_rate=22100):
+
+def encode_wav_to_mp3(wav_data_array, sample_rate=24000):
 
     def float32_to_pcm16(float32_array):
         """
