@@ -8,8 +8,8 @@ import os
 import io
 from typing import List
 
-from .models import SynthesizeRequest
-from .utils import split_text, encode_wav_to_mp3
+from models import SynthesizeRequest
+from utils import split_text, encode_wav_to_mp3
 from TTS.api import TTS
 
 router = APIRouter()

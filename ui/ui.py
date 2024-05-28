@@ -4,7 +4,7 @@ import streamlit as st
 from io import BytesIO
 from pydub import AudioSegment
 import numpy as np
-from .api import get_voice_files, upload_voice_file, synthesize_speech
+from api import upload_voice_file, synthesize_speech
 
 def show_title():
     st.title('ACA TTS Demo')
