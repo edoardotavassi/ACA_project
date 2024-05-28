@@ -4,6 +4,18 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import List
+from fastapi.responses import StreamingResponse
+
+from pydub import AudioSegment
+import numpy as np
+import lameenc
+from IPython.display import Audio
+import io
+import lameenc
+
+
+from TTS.api import TTS
 
 app = FastAPI()  # definition of framework
 
@@ -29,7 +41,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 
-class SyntetizeRequest(BaseModel):
+class SynthesizeRequest(BaseModel):
     text: str
     language: str
 
@@ -48,23 +60,50 @@ def split_text(text, max_length=200):
             current_chunk.append(word)
             current_length += len(word)
     
-    # Add the last chunk
     if current_chunk:
         chunks.append(' '.join(current_chunk))
     
     return chunks
 
+def encode_wav_to_mp3(wav_data_array, sample_rate=24000):
+    def float32_to_pcm16(float32_array):
+        float32_array = np.clip(float32_array, -1.0, 1.0)
+        int16_array = (float32_array * 32767).astype(np.int16)
+        return int16_array
+
+    pcm16_array = float32_to_pcm16(wav_data_array)
+    wav_data = pcm16_array.tobytes()
+    
+    encoder = lameenc.Encoder()
+    encoder.set_bit_rate(128)
+    encoder.set_in_sample_rate(sample_rate)
+    encoder.set_channels(1 if len(wav_data_array.shape) == 1 else wav_data_array.shape[1])
+    encoder.set_quality(2)
+
+    mp3_data = encoder.encode(wav_data)
+    mp3_data += encoder.flush()
+
+    return mp3_data
+
 @app.post("/synthesize")
 async def synthesize(request: SynthesizeRequest):
+    tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
+    voice_to_clone = "input/it.wav"
     text_chunks = split_text(request.text)
-    return {
-        "text_chunks": text_chunks,
-        "language": request.language,
-        "message": "Data received and processed successfully"
-    }
+    synthesized_audio = []
 
+    for chunk in text_chunks:
+        wav = tts.tts(text=chunk, speaker_wav=voice_to_clone, language=request.language)
+        synthesized_audio.append(np.array(wav))
 
+    concatenated_audio = np.concatenate(synthesized_audio)
+    mp3_data = encode_wav_to_mp3(concatenated_audio)
+
+    # Use an in-memory bytes buffer
+    mp3_buffer = io.BytesIO(mp3_data)
+
+    return StreamingResponse(mp3_buffer, media_type="audio/mpeg", headers={"Content-Disposition": "attachment; filename=output.mp3"})
 
 # classic main method
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=5555)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
