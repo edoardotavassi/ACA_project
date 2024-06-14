@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -36,6 +36,7 @@ class SynthesizeRequest(BaseModel):
     text: str
     language: str
     voice_file: str
+
 
 def split_text(text, max_length=200):
     words = text.split()
@@ -82,13 +83,6 @@ async def list_voices():
     voice_files = [f for f in os.listdir("input") if f.endswith(".wav")]
     return {"voices": voice_files}
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    file_location = f"input/{file.filename}"
-    with open(file_location, "wb") as f:
-        f.write(await file.read())
-    return {"info": f"file '{file.filename}' saved at '{file_location}'"}
-
 @app.post("/synthesize")
 async def synthesize(request: SynthesizeRequest):
     tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
@@ -108,6 +102,6 @@ async def synthesize(request: SynthesizeRequest):
 
     return StreamingResponse(mp3_buffer, media_type="audio/mpeg", headers={"Content-Disposition": "attachment; filename=output.mp3"})
 
-
+# classic main method
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)

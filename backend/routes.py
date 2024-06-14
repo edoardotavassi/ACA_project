@@ -6,6 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
 import os
 import io
+import numpy as np
 from typing import List
 
 from models import SynthesizeRequest
@@ -14,12 +15,7 @@ from TTS.api import TTS
 
 router = APIRouter()
 
-@router.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=500,
-        content=jsonable_encoder({"status": "Error"}),
-    )
+
 
 @router.get("/voices")
 async def list_voices():
