@@ -29,6 +29,15 @@ async def upload_file(file: UploadFile = File(...)):
         f.write(await file.read())
     return {"info": f"file '{file.filename}' saved at '{file_location}'"}
 
+@router.post("/delete_file")
+async def delete_file(file: str):
+    file_location = f"input/{file}"
+    if os.path.exists(file_location):
+        os.remove(file_location)
+        return {"info": f"file '{file}' deleted"}
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
+
 @router.post("/synthesize")
 async def synthesize(request: SynthesizeRequest):
     tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
