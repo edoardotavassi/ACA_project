@@ -1,6 +1,5 @@
 import requests
 import time
-import json
 import os
 import pandas as pd
 import re
@@ -13,19 +12,31 @@ SAVE_PATH = "synthesized_audio/"
 # Path to save response times
 RESPONSE_TIMES_PATH = os.path.join(SAVE_PATH, "response_times.csv")
 
-# Ensure the save path directory exists
-os.makedirs(SAVE_PATH, exist_ok=True)
-
-# Load the CSV data
-csv_file_path = "/mnt/data/validated_clips.csv"
-df = pd.read_csv(csv_file_path)
-
 def extract_filename(path):
+    """
+    Extracts the filename from a given path.
+
+    Args:
+        path (str): The path from which to extract the filename.
+
+    Returns:
+        str: The extracted filename, or None if no filename is found.
+    """
     match = re.search(r'[^/]+$', path)
     return match.group(0) if match else None
 
 def test_synthesize(text, voice_file, language="en"):
-    # Create the JSON payload
+    """
+    Synthesizes audio from the given text using the specified voice file and language.
+
+    Args:
+        text (str): The text to synthesize into audio.
+        voice_file (str): The path to the voice file to use for synthesis.
+        language (str, optional): The language code for the text. Defaults to "en".
+
+    Returns:
+        float: The response time in seconds.
+    """
     data = {
         'text': text,
         'language': language,
@@ -55,6 +66,13 @@ def test_synthesize(text, voice_file, language="en"):
         print(f"Failed to synthesize audio. Status code: {response.status_code}, Response: {response.text}")
     
     return response_time
+
+# Ensure the save path directory exists
+os.makedirs(SAVE_PATH, exist_ok=True)
+
+# Load the CSV data
+csv_file_path = "/mnt/data/validated_clips.csv"
+df = pd.read_csv(csv_file_path)
 
 # Initialize response times DataFrame if it does not exist
 if not os.path.exists(RESPONSE_TIMES_PATH):

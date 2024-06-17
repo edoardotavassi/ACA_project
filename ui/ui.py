@@ -12,19 +12,8 @@ def show_title():
 def show_description():
     st.write('This is a demo of the ACA TTS model. You can use this app to generate speech from text.')
 
-def show_voice_file_uploader():
-    uploaded_file = st.file_uploader("Choose a WAV file", type="wav")
-    if uploaded_file is not None:
-        response = upload_voice_file(uploaded_file)
-        if response.status_code == 200:
-            st.success(f"File '{uploaded_file.name}' uploaded successfully.")
-            return uploaded_file.name
-        else:
-            st.error("Failed to upload the file.")
-    return None
-
 def show_text_input():
-    return st.text_area('Text to synthesize', 'Antonio Conte è pronto a tornare in Italia. Tre anni dopo il suo addio all’Inter, il tecnico leccese secondo le indiscrezioni è infatti pronto a firmare un nuovo accordo con il Napoli, che dopo una stagione burrascosa chiusa con il decimo posto in classifica vuole subito rialzarsi e tornare a lottare per le posizioni di vertice.')
+    return st.text_area('Text to synthesize', '')
 
 def show_language_selector():
     return st.selectbox('Language', [
@@ -43,7 +32,40 @@ def show_debug_area(json_data):
 def show_audio_player(mp3_data):
     st.audio(BytesIO(mp3_data), format='audio/mp3')
 
+def show_voice_file_uploader():
+    """
+    Displays a file uploader widget for selecting a WAV file and uploads it.
+
+    Returns:
+        str or None: The name of the uploaded file if successful, None otherwise.
+    """
+    # Display a file uploader widget for selecting a WAV file
+    uploaded_file = st.file_uploader("Choose a WAV file", type="wav")
+    
+    if uploaded_file is not None:
+        # Upload the file using the upload_voice_file function from the api module
+        response = upload_voice_file(uploaded_file)
+        
+        # If the file is uploaded successfully
+        if response.status_code == 200:
+            st.success(f"File '{uploaded_file.name}' uploaded successfully.")
+            return uploaded_file.name
+        else:
+            # Display an error message if the file upload fails
+            st.error("Failed to upload the file.")
+    
+    # Return None if no file is uploaded
+    return None
+
 def display_synthesis_result(mp3_data):
+    """
+    Display the synthesis result by converting MP3 data to an AudioSegment,
+    adjusting the sample rate to 24000 Hz, converting it to raw audio data,
+    and updating the audio player with the new audio data.
+
+    Parameters:
+    - mp3_data (bytes): The MP3 data to be displayed.
+    """
     # Convert MP3 to AudioSegment
     audio_segment = AudioSegment.from_mp3(BytesIO(mp3_data))
     
