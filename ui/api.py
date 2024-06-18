@@ -30,7 +30,8 @@ def upload_voice_file(file):
     Raises:
         Any exceptions raised by the requests.post() method.
     """
-    files = {'file': file.getvalue()}
+    file.seek(0)
+    files = {'file': file}
     response = requests.post(f"{BASE_URL}/upload", files=files)
     return response
 

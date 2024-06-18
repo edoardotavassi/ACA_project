@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import os
 import io
 import numpy as np
+import shutil
 from typing import List
 
 from models import SynthesizeRequest
@@ -39,14 +40,19 @@ async def upload_file(file: UploadFile = File(...)):
     Returns:
     - A dictionary containing information about the uploaded file.
     """
-    file_location = f"input/{file}"
+    # Ensure the input directory exists
+    os.makedirs("input", exist_ok=True)
     
+    # Construct the file path with the original filename and extension
+    file_location = os.path.join("input", file.filename)
+
+
     # Open the file in binary write mode
     with open(file_location, "wb") as f:
-        # Write the contents of the uploaded file to the file location
-        f.write(await file.read())
-    
-    return {"info": f"file '{file}' saved at '{file_location}'"}
+        # Write the contents of the uploaded file to the file location using shutil.copyfileobj
+        shutil.copyfileobj(file.file, f)
+
+    return {"info": f"file '{file.filename}' saved at '{file_location}'"}
 
 @router.post("/delete_file")
 async def delete_file(file: str):
