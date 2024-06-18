@@ -95,6 +95,7 @@ async def synthesize(request: SynthesizeRequest):
     """
     # Create an instance of the TTS model
     tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
+    tts.to(0)
     voice_to_clone = f"input/{request.voice_file}"
 
     # Split the text into smaller chunks to avoid exceeding the model's maximum input length
