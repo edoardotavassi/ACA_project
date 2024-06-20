@@ -18,6 +18,8 @@ The application operates on a two-tier architecture comprising a backend server 
 
 ## Installation
 
+Ensure to have Python 9, ffmpeg and a CUDA version of PyTorch installed
+
 To set up the project locally, follow these steps:
 
 1. **Clone the repository**:  
