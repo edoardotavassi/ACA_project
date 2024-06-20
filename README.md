@@ -20,22 +20,22 @@ The application operates on a two-tier architecture comprising a backend server 
 
 To set up the project locally, follow these steps:
 
-1. **Clone the repository**:
-   git clone https://github.com/edoardotavassi/ACA_project.git
+1. **Clone the repository**:\\
+   git clone https://github.com/edoardotavassi/ACA_project.git\\
    cd ACA_project
 
-2. **Create and activate a virtual environment**:
-   python3 -m venv venv
+2. **Create and activate a virtual environment**:\\
+   python3 -m venv venv\\
    source venv/bin/activate
 
-3. **Install dependencies**:
+3. **Install dependencies**:\\
    pip install -r requirements.txt
 
 ## Usage
-1. **Start the system**
+1. **Start the system**:\\
    ./start.sh
 
-2. **Stop the system**
+2. **Stop the system**:\\
    ./stop.sh
 
 ## Ethical Considerations
