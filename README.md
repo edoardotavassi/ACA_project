@@ -22,15 +22,16 @@ Ensure to have Python 9, ffmpeg and a CUDA version of PyTorch installed
 
 To set up the project locally, follow these steps:
 
-1. **Clone the repository**:  
+1. **Clone the repository**:
+   ```bash
    git clone https://github.com/edoardotavassi/ACA_project.git  
    cd ACA_project
 
-2. **Create and activate a virtual environment**:  
+3. **Create and activate a virtual environment**:  
    python3 -m venv venv  
    source venv/bin/activate
 
-3. **Install dependencies**:  
+4. **Install dependencies**:  
    pip install -r requirements.txt
 
 ## Usage
