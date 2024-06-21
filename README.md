@@ -27,18 +27,22 @@ To set up the project locally, follow these steps:
    git clone https://github.com/edoardotavassi/ACA_project.git  
    cd ACA_project
 
-3. **Create and activate a virtual environment**:  
+3. **Create and activate a virtual environment**:
+   ```bash
    python3 -m venv venv  
    source venv/bin/activate
 
-4. **Install dependencies**:  
+5. **Install dependencies**:
+   ```bash
    pip install -r requirements.txt
 
 ## Usage
-1. **Start the system**:  
+1. **Start the system**:
+   ```bash  
    ./start.sh
 
-2. **Stop the system**:  
+3. **Stop the system**:
+   ```bash
    ./stop.sh
 
 ## Ethical Considerations
